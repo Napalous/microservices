@@ -1,0 +1,96 @@
+
+application {
+  config {
+    baseName projetgateway,
+    applicationType gateway,
+    packageName sn.isi,
+    authenticationType oauth2,
+    prodDatabaseType mysql,
+    databaseType sql,
+    devDatabaseType  mysql,
+    serviceDiscoveryType eureka,
+    clientFramework angularX
+  }
+  entities *
+}
+
+application {
+  config {
+    baseName microservicegestion,
+    applicationType microservice,
+    packageName sn.isi,
+    authenticationType oauth2,
+    prodDatabaseType mysql,
+    databaseType sql,
+    devDatabaseType  mysql,
+    serviceDiscoveryType eureka,
+    serverPort 8089
+  }
+  entities Race, TypeBovin, Bovin
+}
+
+application {
+  config {
+    baseName microserviceproduction,    
+    applicationType microservice,
+    packageName sn.isi,
+    authenticationType oauth2,
+    prodDatabaseType mysql,
+    databaseType sql,
+    devDatabaseType  mysql,
+    serviceDiscoveryType eureka,
+    serverPort 8088
+  }
+  entities FicheMedical, Traitement, ProductionLait
+}
+
+entity Race {
+	libelle String required,
+    image ImageBlob,
+}
+
+entity TypeBovin {
+	libelle String required,
+}
+
+entity Bovin {
+	numero String required,
+    sexe String required,
+    datenaissance Instant required,
+}
+
+entity FicheMedical {
+	observation String required,
+    dateconsultation Instant required,
+}
+
+entity Traitement {
+	traitement String required,
+    datetraitement Instant required,
+}
+
+entity ProductionLait {
+	quantite Integer required,
+    dateproduction Instant required,
+}
+
+
+relationship OneToMany {
+  Race to Bovin
+}
+
+relationship OneToMany {
+  TypeBovin to Bovin
+}
+
+paginate Race, Bovin, Traitement, FicheMedical, ProductionLait, TypeBovin with pagination
+
+microservice Race, Bovin, TypeBovin with microservicegestion
+microservice Traitement, FicheMedical, ProductionLait with microserviceproduction
+
+deployment {
+  deploymentType docker-compose,
+  appsFolders [projetgateway, microservicegestion,microserviceproduction],
+  dockerRepositoryName "pmicro",
+}
+    
